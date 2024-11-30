@@ -1,12 +1,10 @@
-//mongodb+srv://JaturaputJongsubcharoen:mac0840747314@comp229.evxxr.mongodb.net/
-
+//Jaturaput
+//-----------------------------------------------
 const express = require("express");
 const app = express();
 const cors = require("cors");
 const connectDB = require('./db.js')
 const itemModel = require('./Item.js');
-
-
 
 connectDB();
 
@@ -30,4 +28,4 @@ app.get("/apiMongo", async (req, res) => {
 app.listen(8080, () => {
     console.log("Server started on port 8080");
 });
-
+//-----------------------------------------------
