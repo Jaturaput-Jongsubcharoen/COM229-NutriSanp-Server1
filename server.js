@@ -1,5 +1,3 @@
-//mongodb+srv://JaturaputJongsubcharoen:mac0840747314@comp229.evxxr.mongodb.net/
-
 const express = require("express");
 const app = express();
 const cors = require("cors");
