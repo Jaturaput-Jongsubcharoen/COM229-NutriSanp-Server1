@@ -7,7 +7,7 @@ const connectDB = require('./db.js');
 const itemModel = require('./Item.js');
 const axios = require('axios');
 
-// Connect to the database
+// Connect to db.js
 connectDB();
 
 // CORS configuration
