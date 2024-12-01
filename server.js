@@ -29,3 +29,41 @@ app.listen(8080, () => {
     console.log("Server started on port 8080");
 });
 //-----------------------------------------------
+// Gowsith
+//
+// server.js (Backend)
+require('dotenv').config(); // Load environment variables
+
+const express = require('express');
+const axios = require('axios');
+app.use(express.json());
+
+// Use the API key securely from environment variables
+const API_KEY = process.env.GENERATIVE_API_KEY; // Secure API key storage
+
+app.post('/api/generate', async (req, res) => {
+  const { input } = req.body;
+  const prompt = `Get Estimate of caloric, carbohydrate, fat, and protein content for the food item, end with thank you "${input}".`;
+
+  try {
+    // Call the Gemini API securely
+    const response = await axios.post('https://api.google.com/generative-ai-endpoint', {
+      model: "gemini-1.5-flash",
+      prompt: prompt,
+    }, {
+      headers: {
+        Authorization: `Bearer ${AIzaSyBjbMiCGWlR2MbgKOH14uGKpb6VHC8H13o}`, // Use the API key securely here
+      },
+    });
+
+    // Return the API response to the frontend
+    res.json(response.data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Something went wrong. Please try again." });
+  }
+});
+
+app.listen(5000, () => {
+  console.log('Server running on http://localhost:5000');
+});
