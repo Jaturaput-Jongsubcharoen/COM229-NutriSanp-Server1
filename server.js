@@ -31,7 +31,8 @@ app.listen(8080, () => {
 //-----------------------------------------------
 // Gowsith
 //
-// server.js (Backend)
+const cors = require('cors');
+app.use(cors());
 require('dotenv').config(); // Load environment variables
 
 const express = require('express');
@@ -52,7 +53,7 @@ app.post('/api/generate', async (req, res) => {
       prompt: prompt,
     }, {
       headers: {
-        Authorization: `Bearer ${AIzaSyBjbMiCGWlR2MbgKOH14uGKpb6VHC8H13o}`, // Use the API key securely here
+        Authorization: `Bearer ${API_KEY}`, // Use the API key securely here
       },
     });
 
