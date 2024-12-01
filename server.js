@@ -1,70 +1,76 @@
 //Jaturaput
-//-----------------------------------------------
+//----------------------------------------------------------------------------------------------
 const express = require("express");
 const app = express();
-const cors = require("cors");
-const connectDB = require('./db.js')
+const cors = require("cors"); // Only declare cors once
+const connectDB = require('./db.js');
 const itemModel = require('./Item.js');
+const axios = require('axios');
 
+// Connect to the database
 connectDB();
 
+// CORS configuration
 const corsOptions = {
     origin: ["http://localhost:5173"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allow
+    credentials: true, // Enable credentials if required
 };
 
 app.use(express.json());
 app.use(cors(corsOptions));
 
+//----------------------------------------------------------------------------------------------
+// Jaturaput
+// Environment variables
+require('dotenv').config(); // Load environment variables
 
+const API_KEY = process.env.GENERATIVE_API_KEY; // Secure API key storage
+
+// Jaturaput's routes
 app.get("/api", async (req, res) => {
-    res.json({ fruits: ["apple", "orange", "banana" ] });
+    res.json({ fruits: ["apple", "orange", "banana"] });
 });
 
 app.get("/apiMongo", async (req, res) => {
-    const response = await itemModel.find();
-    return res.json({items : response});
+    try {
+        const response = await itemModel.find();
+        return res.json({ items: response });
+    } catch (err) {
+        console.error("Error fetching MongoDB data:", err);
+        res.status(500).json({ error: "Failed to fetch data from MongoDB" });
+    }
 });
 
-app.listen(8080, () => {
-    console.log("Server started on port 8080");
-});
-//-----------------------------------------------
+//----------------------------------------------------------------------------------------------
 // Gowsith
-//
-const cors = require('cors');
-app.use(cors());
-require('dotenv').config(); // Load environment variables
-
-const express = require('express');
-const axios = require('axios');
-app.use(express.json());
-
-// Use the API key securely from environment variables
-const API_KEY = process.env.GENERATIVE_API_KEY; // Secure API key storage
-
 app.post('/api/generate', async (req, res) => {
-  const { input } = req.body;
-  const prompt = `Get Estimate of caloric, carbohydrate, fat, and protein content for the food item, end with thank you "${input}".`;
+    const { input } = req.body;
+    const prompt = `Get Estimate of caloric, carbohydrate, fat, and protein content for the food item, end with thank you "${input}".`;
 
-  try {
-    // Call the Gemini API securely
-    const response = await axios.post('https://api.google.com/generative-ai-endpoint', {
-      model: "gemini-1.5-flash",
-      prompt: prompt,
-    }, {
-      headers: {
-        Authorization: `Bearer ${API_KEY}`, // Use the API key securely here
-      },
-    });
+    try {
+        // Call the Gemini API securely
+        const response = await axios.post('https://api.google.com/generative-ai-endpoint', {
+            model: "gemini-1.5-flash",
+            prompt: prompt,
+        }, {
+            headers: {
+                Authorization: `Bearer ${API_KEY}`, // Use the API key securely here
+            },
+        });
 
-    // Return the API response to the frontend
-    res.json(response.data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Something went wrong. Please try again." });
-  }
+        // Return the API response to the frontend
+        res.json(response.data);
+    } catch (err) {
+        console.error("Error calling external API:", err);
+        res.status(500).json({ error: "Something went wrong. Please try again." });
+    }
 });
 
-app.listen(5000, () => {
-  console.log('Server running on http://localhost:5000');
+//----------------------------------------------------------------------------------------------
+// Start the server
+const PORT = process.env.PORT || 8080; // Use environment variable or default port
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
 });
+//----------------------------------------------------------------------------------------------
