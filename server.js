@@ -42,6 +42,34 @@ app.get("/apiMongo", async (req, res) => {
     }
 });
 
+// Add POST route to save nutrient data to MongoDB
+app.post("/apiMongo", async (req, res) => {
+    try {
+        const { Name, Calories, Protein, Fat, Carbohydrates } = req.body; // Extract fields
+
+        // Validate input
+        if (!Name || !Calories || !Protein || !Fat || !Carbohydrates) {
+            return res.status(400).json({ error: "All fields are required" });
+        }
+
+        // Create a new document
+        const newItem = new itemModel({
+            Name,
+            Calories,
+            Protein,
+            Fat,
+            Carbohydrates,
+        });
+
+        // Save to MongoDB
+        await newItem.save();
+        res.status(201).json({ message: "Nutrient data saved successfully", item: newItem });
+    } catch (err) {
+        console.error("Error saving data to MongoDB:", err);
+        res.status(500).json({ error: "Failed to save data to MongoDB" });
+    }
+});
+
 //----------------------------------------------------------------------------------------------
 // Gowsith
 app.post('/api/generate', async (req, res) => {
