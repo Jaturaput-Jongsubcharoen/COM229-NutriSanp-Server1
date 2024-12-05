@@ -1,9 +1,9 @@
 //Jaturaput
 //----------------------------------------------------------------------------------------------
 const express = require("express");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const path = require("path");
+const bcrypt = require("bcryptjs"); //
+const jwt = require("jsonwebtoken"); //
+const path = require("path"); //
 const app = express();
 const cors = require("cors"); // Only declare cors once
 const connectDB = require('./db.js');
@@ -22,6 +22,10 @@ const corsOptions = {
 
 app.use(express.json());
 app.use(cors(corsOptions));
+
+/////////
+
+let users;
 
 //----------------------------------------------------------------------------------------------
 // Jaturaput
