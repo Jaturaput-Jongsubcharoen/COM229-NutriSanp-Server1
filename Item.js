@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const itemSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -8,6 +8,6 @@ const itemSchema = new mongoose.Schema({
     Carbohydrates: { type: String, required: true },
 });
 
+const itemModel = mongoose.model("Item", itemSchema, "items"); // Explicitly set collection name
 
-const itemModel = mongoose.model("Items", itemSchema);
 module.exports = itemModel;
