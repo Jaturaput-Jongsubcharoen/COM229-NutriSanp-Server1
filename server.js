@@ -1,4 +1,4 @@
-//Jaturaput
+// Jaturaput
 //----------------------------------------------------------------------------------------------
 const express = require("express");
 const app = express();
@@ -11,14 +11,14 @@ const axios = require('axios');
 connectDB();
 
 // CORS configuration
-const corsOptions = {
-    origin: ["http://localhost:5173", "https://comp229-nutrisnap-client1.onrender.com"],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allow
+app.use(cors({
+    origin: ['http://localhost:5173', 'https://comp229-nutrisnap-client1.onrender.com'], // Allow both frontend and localhost for development
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allow specific HTTP methods
     credentials: true, // Enable credentials if required
-};
+}));
 
+// Add JSON parser middleware after CORS
 app.use(express.json());
-app.use(cors(corsOptions));
 
 //----------------------------------------------------------------------------------------------
 // Jaturaput
