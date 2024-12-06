@@ -10,12 +10,8 @@ const axios = require('axios');
 // Connect to db.js //
 connectDB();
 
-const allowedOrigins = process.env.NODE_ENV === 'production'
-    ? ['https://comp229-nutrisnap-client1.onrender.com']
-    : ['http://localhost:5173'];
-
 app.use(cors({
-    origin: allowedOrigins,
+    origin: 'https://comp229-nutrisnap-client1.onrender.com', // Allow both frontend and localhost for development
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allow specific HTTP methods
     credentials: true, // Enable credentials if required
 }));
