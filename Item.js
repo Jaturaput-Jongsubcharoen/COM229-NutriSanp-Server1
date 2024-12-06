@@ -1,6 +1,5 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
-// Updated schema to match your MongoDB data
 const itemSchema = new mongoose.Schema({
     name: { type: String, required: true },
     Calories: { type: String, required: true },
@@ -10,5 +9,4 @@ const itemSchema = new mongoose.Schema({
 });
 
 const itemModel = mongoose.model("Item", itemSchema);
-
 module.exports = itemModel;
