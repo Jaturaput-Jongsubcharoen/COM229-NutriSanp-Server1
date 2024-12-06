@@ -7,6 +7,7 @@ const connectDB = require('./db.js');
 const itemModel = require('./Item.js');
 const axios = require('axios');
 
+
 // Connect to db.js //
 connectDB();
 
@@ -20,7 +21,7 @@ app.use(cors({
 app.use(express.json());
 
 //----------------------------------------------------------------------------------------------
-// Jaturaput
+// Jaturaput //
 // Environment variables
 require('dotenv').config(); // Load environment variables
 console.log('MONGO_URI:', process.env.MONGO_URI); // debugging
