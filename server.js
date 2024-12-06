@@ -23,6 +23,7 @@ app.use(express.json());
 // Jaturaput
 // Environment variables
 require('dotenv').config(); // Load environment variables
+console.log('MONGO_URI:', process.env.MONGO_URI); // debugging
 
 const API_KEY = process.env.GENERATIVE_API_KEY; // Secure API key storage
 
@@ -93,7 +94,7 @@ app.post('/api/generate', async (req, res) => {
 
 //----------------------------------------------------------------------------------------------
 // Start the server
-const PORT = process.env.PORT || 8080; // Use environment variable or default port
+const PORT = process.env.PORT || 3000; // Use environment variable or default port
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
