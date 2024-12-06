@@ -12,7 +12,7 @@ connectDB();
 
 // CORS configuration
 const corsOptions = {
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", "https://comp229-nutrisnap-client1.onrender.com"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allow
     credentials: true, // Enable credentials if required
 };
