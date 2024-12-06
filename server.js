@@ -18,7 +18,7 @@ let conn;
 
 // IIFE for connecting to MongoDB without try-catch
 (async () => {
-    const conn = await mongoose.connect(
+    conn = await mongoose.connect(
         process.env.MONGO_URI
     );
     console.log(`MongoDB Connected: ${conn.connection.host}`);
@@ -34,6 +34,7 @@ const corsOptions = {
 app.use(express.json());
 app.use(cors(corsOptions));
 
+
 //----------------------------------------------------------------------------------------------
 // Jaturaput's routes
 app.get("/api", async (req, res) => {
@@ -42,13 +43,12 @@ app.get("/api", async (req, res) => {
 
 app.get("/apiMongo", async (req, res) => {
     try {
-        // Access the MongoDB database and collection using the connection
         const db = conn.connection.db;
-        const itemsCollection = db.collection("items"); // Explicitly reference the "items" collection
-        const response = await itemsCollection.find({}).toArray(); // Fetch all documents
-        return res.json({ items: response });
+        const itemsCollection = db.collection("items"); 
+        const response = await itemsCollection.find({}).toArray(); 
+        res.json({ items: response });
     } catch (err) {
-        console.error("Error fetching MongoDB data:", err);
+        console.error("Error fetching MongoDB data:", err); 
         res.status(500).json({ error: "Failed to fetch data from MongoDB" });
     }
 });
