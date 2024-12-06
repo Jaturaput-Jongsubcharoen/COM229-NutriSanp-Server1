@@ -1,4 +1,4 @@
-// Jaturaput
+//Jaturaput
 //----------------------------------------------------------------------------------------------
 const express = require("express");
 const app = express();
@@ -7,24 +7,23 @@ const connectDB = require('./db.js');
 const itemModel = require('./Item.js');
 const axios = require('axios');
 
-
-// Connect to db.js //
+// Connect to db.js
 connectDB();
 
-app.use(cors({
-    origin: ['http://localhost:5173', 'https://comp229-nutrisnap-client1.onrender.com'], // Allow both frontend and localhost for development
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allow specific HTTP methods
+// CORS configuration
+const corsOptions = {
+    origin: ["http://localhost:5173"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allow
     credentials: true, // Enable credentials if required
-}));
+};
 
-// Add JSON parser middleware after CORS
 app.use(express.json());
+app.use(cors(corsOptions));
 
 //----------------------------------------------------------------------------------------------
-// Jaturaput //
+// Jaturaput
 // Environment variables
 require('dotenv').config(); // Load environment variables
-console.log('MONGO_URI:', process.env.MONGO_URI); // debugging
 
 const API_KEY = process.env.GENERATIVE_API_KEY; // Secure API key storage
 
@@ -40,31 +39,6 @@ app.get("/apiMongo", async (req, res) => {
     } catch (err) {
         console.error("Error fetching MongoDB data:", err);
         res.status(500).json({ error: "Failed to fetch data from MongoDB" });
-    }
-});
-
-// Add
-app.post("/apiMongo", async (req, res) => {
-    try {
-        const { Name, Calories, Protein, Fat, Carbohydrates } = req.body; // Extract fields
-
-        if (!Name || !Calories || !Protein || !Fat || !Carbohydrates) {
-            return res.status(400).json({ error: "All fields are required" });
-        }
-
-        const newItem = new itemModel({
-            Name,
-            Calories,
-            Protein,
-            Fat,
-            Carbohydrates,
-        });
-
-        await newItem.save();
-        res.status(201).json({ message: "Nutrient data saved successfully", item: newItem });
-    } catch (err) {
-        console.error("Error saving data to MongoDB:", err);
-        res.status(500).json({ error: "Failed to save data to MongoDB" });
     }
 });
 
@@ -95,7 +69,7 @@ app.post('/api/generate', async (req, res) => {
 
 //----------------------------------------------------------------------------------------------
 // Start the server
-const PORT = process.env.PORT || 3000; // Use environment variable or default port
+const PORT = process.env.PORT || 8080; // Use environment variable or default port
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
