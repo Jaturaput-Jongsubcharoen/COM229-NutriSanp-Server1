@@ -1,6 +1,12 @@
 //Jaturaput
 //----------------------------------------------------------------------------------------------
 const express = require("express");
+<<<<<<< HEAD
+=======
+const bcrypt = require("bcryptjs"); //
+const jwt = require("jsonwebtoken"); //
+const path = require("path"); //
+>>>>>>> Sukhmanpreet_registration_login
 const app = express();
 const cors = require("cors"); // Only declare cors once
 const connectDB = require('./db.js');
@@ -20,6 +26,13 @@ const corsOptions = {
 app.use(express.json());
 app.use(cors(corsOptions));
 
+<<<<<<< HEAD
+=======
+/////////
+
+let users;
+
+>>>>>>> Sukhmanpreet_registration_login
 //----------------------------------------------------------------------------------------------
 // Jaturaput
 // Environment variables
@@ -42,6 +55,7 @@ app.get("/apiMongo", async (req, res) => {
     }
 });
 
+<<<<<<< HEAD
 // Add POST route to save nutrient data to MongoDB
 app.post("/apiMongo", async (req, res) => {
     try {
@@ -67,10 +81,35 @@ app.post("/apiMongo", async (req, res) => {
     } catch (err) {
         console.error("Error saving data to MongoDB:", err);
         res.status(500).json({ error: "Failed to save data to MongoDB" });
+=======
+//----------------------------------------------------------------------------------------------
+// Gowsith
+app.post('/api/generate', async (req, res) => {
+    const { input } = req.body;
+    const prompt = `Get Estimate of caloric, carbohydrate, fat, and protein content for the food item, end with thank you "${input}".`;
+
+    try {
+        // Call the Gemini API securely
+        const response = await axios.post('https://api.google.com/generative-ai-endpoint', {
+            model: "gemini-1.5-flash",
+            prompt: prompt,
+        }, {
+            headers: {
+                Authorization: `Bearer ${API_KEY}`, // Use the API key securely here
+            },
+        });
+
+        // Return the API response to the frontend
+        res.json(response.data);
+    } catch (err) {
+        console.error("Error calling external API:", err);
+        res.status(500).json({ error: "Something went wrong. Please try again." });
+>>>>>>> Sukhmanpreet_registration_login
     }
 });
 
 //----------------------------------------------------------------------------------------------
+<<<<<<< HEAD
 // Gowsith
 app.post('/api/generate', async (req, res) => {
     const { input } = req.body;
@@ -96,6 +135,8 @@ app.post('/api/generate', async (req, res) => {
 });
 
 //----------------------------------------------------------------------------------------------
+=======
+>>>>>>> Sukhmanpreet_registration_login
 // Start the server
 const PORT = process.env.PORT || 8080; // Use environment variable or default port
 app.listen(PORT, () => {
