@@ -9,5 +9,5 @@ const itemSchema = new mongoose.Schema({
 });
 
 
-const itemModel = mongoose.model("Item", itemSchema);
+const itemModel = mongoose.model("Items", itemSchema);
 module.exports = itemModel;
