@@ -1,10 +1,9 @@
 // Jaturaput
 //----------------------------------------------------------------------------------------------
 const express = require("express");
+const mongoose = require("mongoose"); // Import mongoose for MongoDB connection
 const app = express();
 const cors = require("cors"); // Only declare cors once
-const mongoose = require("mongoose"); // Import mongoose for MongoDB connection
-const itemModel = require("./Item.js"); // Import Mongoose model
 const axios = require("axios");
 
 //----------------------------------------------------------------------------------------------
@@ -14,21 +13,21 @@ require("dotenv").config(); // Load environment variables
 
 const API_KEY = process.env.GENERATIVE_API_KEY; // Secure API key storage
 
-// Connect to MongoDB without try-catch
-mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-});
+// Connect to MongoDB
+let conn;
+(async () => {
+    try {
+        conn = await mongoose.connect(process.env.MONGO_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log(`MongoDB Connected: ${conn.connection.host}`);
+    } catch (err) {
+        console.error("Error connecting to MongoDB:", err);
+        process.exit(1); // Exit with failure if the connection fails
+    }
+})();
 
-// Global event listeners for connection success or error
-mongoose.connection.on("connected", () => {
-    console.log("MongoDB Connected!");
-});
-mongoose.connection.on("error", (err) => {
-    console.error("MongoDB Connection Error:", err);
-});
-
-//----------------------------------------------------------------------------------------------
 // CORS configuration
 const corsOptions = {
     origin: ["http://localhost:5173", "https://comp229-nutrisnap-client1.onrender.com"], // Allowed origins
@@ -47,7 +46,10 @@ app.get("/api", async (req, res) => {
 
 app.get("/apiMongo", async (req, res) => {
     try {
-        const response = await itemModel.find();
+        // Access the MongoDB database and collection using the connection
+        const db = conn.connection.db;
+        const itemsCollection = db.collection("items"); // Explicitly reference the "items" collection
+        const response = await itemsCollection.find({}).toArray(); // Fetch all documents
         return res.json({ items: response });
     } catch (err) {
         console.error("Error fetching MongoDB data:", err);
