@@ -7,16 +7,13 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const cors = require("cors"); // Only declare cors once
-const axios = require("axios");
-require("dotenv").config(); // This loads the .env file
+const axios = require("axios"); 
+require("dotenv").config(); //  *Impotant line* -----------------------------------------------This loads the .env file
 const secret_key = process.env.SECRET_KEY
 const Item = require("./models/Item");
 
 //----------------------------------------------------------------------------------------------
 // Jaturaput
-// Environment variables
-require("dotenv").config(); // Load environment variables
-
 const API_KEY = process.env.GENERATIVE_API_KEY; // Secure API key storage
 
 // Connect to MongoDB
@@ -39,60 +36,6 @@ const corsOptions = {
 
 app.use(express.json());
 app.use(cors(corsOptions));
-
-//---------------------------------------------------------------------
-//Sukhmanpreet register route
-const User = mongoose.model("User", new mongoose.Schema({
-    username: String,
-    password: String,
-    email: String
-}));
-
-app.post("/register", async (req, res) => {
-    const { username, password, email } = req.body;
-
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    try {
-        // Insert the user into the MongoDB using Mongoose model
-        const newUser = new User({ username, password: hashedPassword, email });
-        await newUser.save(); // Use save method to insert data
-        res.status(201).json("User registered successfully");
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Failed to register user" });
-    }
-});
-
-
-//Sukhmanpreet Login Route
-app.post("/login", async (req, res) => {
-    const { username, password } = req.body;
-    const user = await User.findOne({ username });
-  
-    if (!user) {
-      return res.status(400).json("Invalid credentials");
-    }
-  
-    // Compare the provided password with the hashed password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(400).json("Invalid credentials");
-    }
-    else{
-        // res.status(201).json("ok")
-    }
-  
-    const token = jwt.sign(
-        { username: user.username, email: user.email },
-        secret_key,
-        { expiresIn: "1h" }
-    );
-
-    // Send the token in the response
-    res.json({ token });
-});
 
 //----------------------------------------------------------------------------------------------
 // Jaturaput's routes
@@ -166,6 +109,60 @@ app.post("/api/generate", async (req, res) => {
         console.error("Error calling external API:", err);
         res.status(500).json({ error: "Something went wrong. Please try again." });
     }
+});
+
+//---------------------------------------------------------------------
+//Sukhmanpreet register route
+const User = mongoose.model("User", new mongoose.Schema({
+    username: String,
+    password: String,
+    email: String
+}));
+
+app.post("/register", async (req, res) => {
+    const { username, password, email } = req.body;
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    try {
+        // Insert the user into the MongoDB using Mongoose model
+        const newUser = new User({ username, password: hashedPassword, email });
+        await newUser.save(); // Use save method to insert data
+        res.status(201).json("User registered successfully");
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to register user" });
+    }
+});
+
+
+//Sukhmanpreet Login Route
+app.post("/login", async (req, res) => {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username });
+  
+    if (!user) {
+      return res.status(400).json("Invalid credentials");
+    }
+  
+    // Compare the provided password with the hashed password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json("Invalid credentials");
+    }
+    else{
+        // res.status(201).json("ok")
+    }
+  
+    const token = jwt.sign(
+        { username: user.username, email: user.email },
+        secret_key,
+        { expiresIn: "1h" }
+    );
+
+    // Send the token in the response
+    res.json({ token });
 });
 
 //----------------------------------------------------------------------------------------------
