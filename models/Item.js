@@ -1,10 +1,14 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const itemSchema = new mongoose.Schema({
-    name: String,
-    description: String
-})
+  name: { type: String, required: true },
+  calories: { type: String, required: true },
+  protein: { type: String, required: true },
+  carbohydrates: { type: String, required: true },
+  fat: { type: String, required: true },
+  mealType: { type: String, required: true },
+});
 
+const Item = mongoose.model("Item", itemSchema, "items"); // Explicitly set collection name
 
-const itemModel = mongoose.model("Item", itemSchema);
-module.exports = itemModel;
+module.exports = Item;

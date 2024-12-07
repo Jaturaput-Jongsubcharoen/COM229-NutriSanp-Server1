@@ -5,6 +5,7 @@ const mongoose = require("mongoose"); // Import mongoose for MongoDB connection
 const app = express();
 const cors = require("cors"); // Only declare cors once
 const axios = require("axios");
+const Item = require("./models/Item");
 
 //----------------------------------------------------------------------------------------------
 // Jaturaput
@@ -50,6 +51,33 @@ app.get("/apiMongo", async (req, res) => {
     } catch (err) {
         console.error("Error fetching MongoDB data:", err); 
         res.status(500).json({ error: "Failed to fetch data from MongoDB" });
+    }
+});
+
+// Add POST route to save product details to MongoDB
+app.post("/nutrients", async (req, res) => {
+    try {
+        const { name, calories, protein, carbohydrates, fat, mealType } = req.body;
+
+        // Ensure all required fields are present
+        if (!name || !calories || !protein || !carbohydrates || !fat || !mealType) {
+            return res.status(400).json({ error: "All fields are required" });
+        }
+
+        // Save the data to MongoDB
+        const newItem = new Item({
+            name,
+            calories,
+            protein,
+            carbohydrates,
+            fat,
+            mealType,
+        });
+        const savedItem = await newItem.save();
+        res.status(201).json(savedItem); // Respond with the saved item
+    } catch (error) {
+        console.error("Error in /nutrients endpoint:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
