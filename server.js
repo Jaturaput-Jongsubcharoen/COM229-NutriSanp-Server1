@@ -60,12 +60,12 @@ app.post("/nutrients", async (req, res) => {
     try {
         const { name, calories, protein, carbohydrates, fat, mealType } = req.body;
 
-        // Ensure all required fields are present
+        // Please don't chacge this
         if (!name || !calories || !protein || !carbohydrates || !fat || !mealType) {
             return res.status(400).json({ error: "All fields are required" });
         }
 
-        // Save the data to MongoDB
+        // Save the data to MongoDB. Please don't chacge this
         const newItem = new Item({
             name,
             calories,
@@ -75,7 +75,7 @@ app.post("/nutrients", async (req, res) => {
             mealType,
         });
         const savedItem = await newItem.save();
-        res.status(201).json(savedItem); // Respond with the saved item
+        res.status(201).json(savedItem);
     } catch (error) {
         console.error("Error in /nutrients endpoint:", error);
         res.status(500).json({ error: "Internal Server Error" });
