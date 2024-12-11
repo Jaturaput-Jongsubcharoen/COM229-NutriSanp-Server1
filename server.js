@@ -201,6 +201,29 @@ app.post("/login", async (req, res) => {
 });
 
 //----------------------------------------------------------------------------------------------
+
+app.get("/getUser", authenticateJWT, async (req, res) => {
+    try {
+        const userID = req.userID; // Extract userID from token
+        if (!userID) {
+            return res.status(400).json({ error: "User ID is required" });
+        }
+
+        // Use the User model to query the users collection
+        const user = await User.findById(userID).select("username email"); // Select username and email
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        // Send the username to the client
+        res.json({ username: user.username });
+    } catch (error) {
+        console.error("Error fetching user details:", error);
+        res.status(500).json({ error: "Failed to fetch user details" });
+    }
+});
+
+//----------------------------------------------------------------------------------------------
 // Start the server
 const PORT = process.env.PORT || 8080; // Use environment variable or default port
 app.listen(PORT, () => {
