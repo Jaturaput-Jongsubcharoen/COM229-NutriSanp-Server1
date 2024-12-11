@@ -12,6 +12,7 @@ require("dotenv").config(); //  *Impotant line* --------------------------------
 const secret_key = process.env.SECRET_KEY
 const Item = require("./models/Item");
 
+
 //----------------------------------------------------------------------------------------------
 // Jaturaput
 const API_KEY = process.env.GENERATIVE_API_KEY; // Secure API key storage
@@ -43,28 +44,62 @@ app.get("/api", async (req, res) => {
     res.json({ fruits: ["apple", "orange", "banana"] });
 });
 
-app.get("/apiMongo", async (req, res) => {
+const authenticateJWT = (req, res, next) => {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+        return res.status(403).json({ error: "No token provided" });
+    }
+
     try {
+        const decoded = jwt.verify(token, secret_key);
+        req.userID = decoded.userID; // Attach userID
+        next();
+    } catch (err) {
+        res.status(401).json({ error: "Unauthorized" });
+    }
+};
+
+app.get("/apiMongo", authenticateJWT, async (req, res) => {
+    try {
+        // Attached by the authenticateJWT middleware
+        const userID = req.userID;
+
+        if (!userID) {
+            return res.status(400).json({ error: "userID is required" });
+        }
+
+        console.log("userID received from token:", userID); // Debugging
+
         const db = conn.connection.db;
-        const itemsCollection = db.collection("items"); 
-        const response = await itemsCollection.find({}).toArray(); 
+        const itemsCollection = db.collection("items");
+
+        // Query directly with userID as a string
+        const response = await itemsCollection.find({ userID }).toArray();
+
+        if (!response || response.length === 0) {
+            return res.status(404).json({ error: "No items found for this userID" });
+        }
+
         res.json({ items: response });
     } catch (err) {
-        console.error("Error fetching MongoDB data:", err); 
+        console.error("Error fetching MongoDB data:", err);
         res.status(500).json({ error: "Failed to fetch data from MongoDB" });
     }
 });
 
 // Add POST route to save product details to MongoDB
-app.post("/nutrients", async (req, res) => {
+app.post("/nutrients", authenticateJWT, async (req, res) => {
+    console.log("Received body:", req.body);
     try {
         const { name, calories, protein, carbohydrates, fat, mealType } = req.body;
+
+        const userID = req.userID;
 
         // Please don't chacge this
         if (!name || !calories || !protein || !carbohydrates || !fat || !mealType) {
             return res.status(400).json({ error: "All fields are required" });
         }
-
+        //------------------------------------------------------------------------
         // Save the data to MongoDB. Please don't chacge this
         const newItem = new Item({
             name,
@@ -73,6 +108,9 @@ app.post("/nutrients", async (req, res) => {
             carbohydrates,
             fat,
             mealType,
+            //------------------------------------------------------------------------
+            userID,
+            //------------------------------------------------------------------------
         });
         const savedItem = await newItem.save();
         res.status(201).json(savedItem);
@@ -141,28 +179,25 @@ app.post("/register", async (req, res) => {
 app.post("/login", async (req, res) => {
     const { username, password } = req.body;
     const user = await User.findOne({ username });
-  
+
     if (!user) {
-      return res.status(400).json("Invalid credentials");
+        return res.status(400).json("Invalid credentials");
     }
-  
+
     // Compare the provided password with the hashed password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(400).json("Invalid credentials");
+        return res.status(400).json("Invalid credentials");
     }
-    else{
-        // res.status(201).json("ok")
-    }
-  
+
     const token = jwt.sign(
-        { username: user.username, email: user.email },
+        { userID: user._id, username: user.username, email: user.email },
         secret_key,
         { expiresIn: "1h" }
     );
 
-    // Send the token in the response
-    res.json({ token });
+    // Include the userID in the response
+    res.json({ token, userID: user._id });
 });
 
 //----------------------------------------------------------------------------------------------

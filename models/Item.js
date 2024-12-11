@@ -7,6 +7,9 @@ const itemSchema = new mongoose.Schema({
   carbohydrates: { type: String, required: true },
   fat: { type: String, required: true },
   mealType: { type: String, required: true },
+  //----------------------------------------------------------------------------
+  userID: { type: String, required: true },
+  //----------------------------------------------------------------------------
 });
 
 const Item = mongoose.model("Item", itemSchema, "items"); // Explicitly set collection name
