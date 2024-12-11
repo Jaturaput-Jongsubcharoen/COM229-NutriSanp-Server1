@@ -11,7 +11,7 @@ const axios = require("axios");
 require("dotenv").config(); //  *Impotant line* -----------------------------------------------This loads the .env file
 const secret_key = process.env.SECRET_KEY
 const Item = require("./models/Item");
-
+const { ObjectId } = mongoose.Types;
 
 //----------------------------------------------------------------------------------------------
 // Jaturaput
@@ -47,7 +47,7 @@ app.get("/api", async (req, res) => {
 const authenticateJWT = (req, res, next) => {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
-        return res.status(403).json({ error: "No token provided" });
+        return res.status(403).json({ error: "Access token is missing or invalid" });
     }
 
     try {
@@ -55,7 +55,7 @@ const authenticateJWT = (req, res, next) => {
         req.userID = decoded.userID; // Attach userID
         next();
     } catch (err) {
-        res.status(401).json({ error: "Unauthorized" });
+        res.status(401).json({ error: "Invalid or expired token" });
     }
 };
 
@@ -117,6 +117,28 @@ app.post("/nutrients", authenticateJWT, async (req, res) => {
     } catch (error) {
         console.error("Error in /nutrients endpoint:", error);
         res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+app.delete('/apiMongo/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({ error: "Invalid ID format" });
+        }
+
+        const db = conn.connection.db;
+        const itemsCollection = db.collection("items");
+        const result = await itemsCollection.deleteOne({ _id: new ObjectId(id) });
+
+        if (result.deletedCount === 1) {
+            res.status(200).json({ message: "Item deleted successfully" });
+        } else {
+            res.status(404).json({ error: "Item not found" });
+        }
+    } catch (error) {
+        console.error("Error deleting item:", error);
+        res.status(500).json({ error: "Failed to delete item" });
     }
 });
 
