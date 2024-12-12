@@ -182,20 +182,26 @@ const User = mongoose.model("User", new mongoose.Schema({
 app.post("/register", async (req, res) => {
     const { username, password, email } = req.body;
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     try {
-        // Insert the user into the MongoDB using Mongoose model
+        // Check if username or email already exists
+        const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+        if (existingUser) {
+            return res.status(400).json({ error: "Username or email already exists" });
+        }
+
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Insert the user into MongoDB
         const newUser = new User({ username, password: hashedPassword, email });
-        await newUser.save(); // Use save method to insert data
+        await newUser.save();
+
         res.status(201).json("User registered successfully");
     } catch (error) {
-        console.error(error);
+        console.error("Error in /register endpoint:", error);
         res.status(500).json({ error: "Failed to register user" });
     }
 });
-
 
 //Sukhmanpreet Login Route
 app.post("/login", async (req, res) => {
