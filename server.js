@@ -47,7 +47,7 @@ app.get("/api", async (req, res) => {
 const authenticateJWT = (req, res, next) => {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
-        return res.status(403).json({ error: "Access token is missing or invalid" });
+        return res.status(403).json({ error: "No token provided" });
     }
 
     try {
@@ -55,7 +55,7 @@ const authenticateJWT = (req, res, next) => {
         req.userID = decoded.userID; // Attach userID
         next();
     } catch (err) {
-        res.status(401).json({ error: "Invalid or expired token" });
+        res.status(401).json({ error: "Unauthorized" });
     }
 };
 
