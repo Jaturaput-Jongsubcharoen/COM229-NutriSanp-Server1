@@ -12,7 +12,7 @@ require("dotenv").config(); //  *Impotant line* --------------------------------
 const secret_key = process.env.SECRET_KEY
 const Item = require("./models/Item");
 const { ObjectId } = mongoose.Types;
-
+//----------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------
 // Jaturaput
 const API_KEY = process.env.GENERATIVE_API_KEY; // Secure API key storage
