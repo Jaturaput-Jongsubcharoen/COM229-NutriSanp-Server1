@@ -253,7 +253,7 @@ app.get("/getUser", authenticateJWT, async (req, res) => {
 
 //----------------------------------------------------------------------------------------------
 // Start the server
-const PORT = process.env.PORT || 8080; // Use environment variable or default port
+const PORT = process.env.PORT || 8081; // Use environment variable or default port
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
